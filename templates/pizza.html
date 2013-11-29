@@ -1,0 +1,124 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/html">
+<head>
+    <title>Заказ пиццы</title>
+
+    <style>
+        div {
+            /*border: solid 1px;*/
+            font-size: 22px;
+            padding-bottom: 30px;
+        }
+        .io {
+            margin-left: 50px;
+        }
+    </style>
+
+    <!-- подключаем ядро Jquery -->
+    <script type="text/javascript" src="/static/jquery/jquery-2.0.3.min.js"></script>
+
+    <!-- подключаем модуль cookie -->
+    <script type="text/javascript" src="/static/jquery/jquery.cookie.js"></script>
+
+    <script>
+        function pizza_pizza(button) {
+			var order = [];
+            $(button).hide(200).delay(2000).show(200);
+
+            var client_name = $('#choice [name = name] input').val();
+            order['client_name'] = client_name;
+
+            var pizzas_count = 0;
+            $('#choice [name = assortment] input:checked, #choice [name = assortment] input:text').each(function() {
+                var pizza_checked = $(this).val();
+                if (pizza_checked != '') {
+	   	    order['pizza_chacked_'+pizzas_count] = pizza_checked;
+                    pizzas_count++;
+                }
+            });
+			/*
+            console.log('pizzas_count = ' + pizzas_count);
+			order[order.length] = pizza_checked;
+			*/
+			
+			send(order);
+			console.log(order)
+        }
+		
+		function send(order) {
+            $.ajax({
+                type: "POST",
+                url: "/",
+                dataType: 'JSON',
+                data: {
+                    order: order
+                },
+                
+				/*
+                beforesend: $('.content').html('Загрузка'),
+                
+                success: function(data, code){
+                    if (code==200){
+                      $('.content').html(data); // запрос успешно прошел
+                    }else{
+                      $('.content').html(code); // возникла ошибка, возвращаем код ошибки
+                    }
+                    
+                  $('.content').html('Ваше имя: '+data.fio[1]); // данные которые вернул сервер!
+ 
+                },
+                
+                error:  function(xhr, str){
+                     $('.content').html('Критическая ошибка'); 
+                },
+                
+                complete:  function(){ //а тут ничего из предложенных параметров не берем :)
+                    $('#something').hide(); //например, спрятали какую-то кнопочку, которая вызывала запрос
+                }
+				*/
+            });
+		}
+    </script>
+</head>
+<body>
+    <div>
+        <img src="/static/infobox_pizza.png" />
+    </div>
+
+    <div id="choice" style="width: 49%; min-height: 500px; float: left;">
+        <div name="title">
+            <span style="text-decoration: underline;">Заказ пиццы!</span>
+        </div>
+        <div name="name">
+            <span>Имя</span><br />
+            <input type="text" class="io">
+        </div>
+        <div name="assortment">
+            <span>Пожелания</span><br />
+            <input type="checkbox" class="io pizza" value="pizza_1">pizza_1</input><br />
+            <input type="checkbox" class="io pizza" value="pizza_2">pizza_2</input><br />
+            <input type="checkbox" class="io pizza" value="pizza_3">pizza_3</input><br />
+            <input type="checkbox" class="io pizza" value="pizza_4">pizza_4</input><br />
+            <input type="checkbox" class="io pizza" value="pizza_5">pizza_5</input><br />
+            <input type="text" name="other" class="io pizza" placeholder="Другое"><br />
+        </div>
+        <input type="button" value="Я буду пиццу!" class="io" style="width: 200px; height: 100px;" onclick="pizza_pizza(this);" />
+    </div>
+
+    <div id="order" style="width: 49%; min-height: 500px; float: left;">
+        <div name="title">
+            <span style="text-decoration: underline;">Уже выбрали пиццу</span>
+        </div>
+        <div name="clients">
+            <span>Эти люди:</span><br />
+            <span class="val io">...</span>
+        </div>
+        <div name="pizzas">
+            <span>Будут кушать:</span><br />
+            <span class="val io">...</span>
+        </div>
+	<hr>{{date}}
+	<hr>{{pizza}}
+    </div>
+</body>
+</html>
