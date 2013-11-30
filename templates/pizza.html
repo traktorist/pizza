@@ -5,7 +5,7 @@
 
     <style>
         div {
-            /*border: solid 1px;*/
+            //border: solid 1px;
             font-size: 22px;
             padding-bottom: 30px;
         }
@@ -21,61 +21,55 @@
     <script type="text/javascript" src="/static/jquery/jquery.cookie.js"></script>
 
     <script>
+		/* получение параметров заказа после загрузки документа */
+		$(document).ready(function () {
+			//get_order();
+		});
+		
+		/* функция компоновки пользовательского ордера */
         function pizza_pizza(button) {
 			var order = [];
+			var pizzas = [];
             $(button).hide(200).delay(2000).show(200);
 
             var client_name = $('#choice [name = name] input').val();
             order['client_name'] = client_name;
 
-            var pizzas_count = 0;
             $('#choice [name = assortment] input:checked, #choice [name = assortment] input:text').each(function() {
                 var pizza_checked = $(this).val();
                 if (pizza_checked != '') {
-	   	    order['pizza_chacked_'+pizzas_count] = pizza_checked;
-                    pizzas_count++;
+					pizzas[pizzas.length] = pizza_checked;
                 }
             });
-			/*
-            console.log('pizzas_count = ' + pizzas_count);
-			order[order.length] = pizza_checked;
-			*/
+			order['pizzas'] = pizzas;
 			
-			send(order);
-			console.log(order)
+			send_order(order);			
         }
 		
-		function send(order) {
+		/* функция отправки пользовательского ордера в общий заказ */
+		function send_order(order) {
             $.ajax({
                 type: "POST",
                 url: "/",
                 dataType: 'JSON',
                 data: {
+					action: 'send',
                     order: order
-                },
-                
-				/*
-                beforesend: $('.content').html('Загрузка'),
-                
-                success: function(data, code){
-                    if (code==200){
-                      $('.content').html(data); // запрос успешно прошел
-                    }else{
-                      $('.content').html(code); // возникла ошибка, возвращаем код ошибки
-                    }
-                    
-                  $('.content').html('Ваше имя: '+data.fio[1]); // данные которые вернул сервер!
- 
-                },
-                
-                error:  function(xhr, str){
-                     $('.content').html('Критическая ошибка'); 
-                },
-                
-                complete:  function(){ //а тут ничего из предложенных параметров не берем :)
-                    $('#something').hide(); //например, спрятали какую-то кнопочку, которая вызывала запрос
                 }
-				*/
+            });
+			
+			//get_order();
+		}
+		
+		/* функция получения параметров заказа */
+		function get_order() {
+            $.ajax({
+                type: "POST",
+                url: "/",
+                //dataType: 'JSON',
+                data: {
+					action: 'get'
+                }
             });
 		}
     </script>
